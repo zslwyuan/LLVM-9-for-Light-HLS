@@ -1,0 +1,31 @@
+--- include/clang/Basic/AttrDocs.td
++++ include/clang/Basic/AttrDocs.td
+@@ -4116,3 +4116,28 @@
+ attribute can also be written using C++11 syntax: ``[[mig::server_routine]]``.
+ }];
+ }
++
++def ArbPrecIntDocs : Documentation {
++  let Category = DocCatType;
++  let Content = [{
++Since FPGAs have the ability to produce non-power-of-2 math units, there is a
++requirement to have an integer type that supports an arbitrary compile time bit
++representation. These need to be expressed in IR as the correct precision int
++types (such as i3, i46, etc).
++
++This implements an arbitrary precision integer type (and a version where the
++number of bits is Dependent). The syntax for declaring an integer with an
++arbitrary number of bits is via the attribute __ap_int(N), which is usable only
++on typedef/using clauses. For example:
++
++typedef int int3_tt __attribute__((__ap_int(3)));
++// Dependent Version:
++template <unsigned Size>
++using MyInt = int __attribute__((__ap_int(Size)));
++
++The typedef inherits its 'signedness' from the 'underlying type'. Otherwise,
++this type has no affect on the ArbPrecInt. All operations on an ArbPrecInt
++should take place as an ArbPrecInt type, promoting to the larger of the two
++types.
++  }];
++}
